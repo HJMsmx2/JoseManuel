@@ -10,6 +10,7 @@ HOST_IP="192.168.239.231"
 
 # Actualización de nombre de maquina.
 sudo -S <<< $PASSsv1 hostnamectl set-hostname Server
+echo bash
 
 # Actualización de repositorios
 sudo -S <<< $PASSsv1 apt update -y && sudo apt upgrade -y
@@ -21,9 +22,6 @@ sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP" << EOF
         echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
 EOF
 
-
-sudo -S <<< usuario hostnamectl set-hostname Server
-echo bash
 echo "PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
 sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup 
 echo "PASSsv1" | sudo -S rm /etc/netplan/50-cloud-init.yaml
