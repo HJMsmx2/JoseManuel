@@ -22,7 +22,10 @@ sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP" << EOF
         echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
 EOF
 
+# Codigo para darle constraseña al usuario Root para poder aplicar el ansible posteriormente.
 echo "PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
+
+# Creación de backup del netplan actual y aplicación del nuevo netplan
 sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup 
 echo "PASSsv1" | sudo -S rm /etc/netplan/50-cloud-init.yaml
 echo "PASSsv1" | sudo -S touch /etc/netplan/50-cloud-init.yaml
