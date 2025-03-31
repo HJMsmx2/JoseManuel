@@ -1,1 +1,8 @@
-
+#!/bin/bash
+# Este script hace algo útil
+sudo -S <<< usuario apt update -y && sudo apt upgrade -y
+sudo -S <<< usuario apt install sshpass
+sshpass -p usuario ssh -o StrictHostKeyChecking=no usuario@192.168.239.231
+sudo -S <<< usuario hostnamectl set-hostname Server
+echo bash
+echo "usuario" | sudo -S chpasswd <<< "root:melon"
