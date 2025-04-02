@@ -8,10 +8,6 @@ PASSsv2="melon"
 
 HOST_IP="192.168.239.231"
 
-# Actualización de nombre de maquina.
-echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
-echo bash
-
 # Actualización de repositorios
 echo "$PASSsv1" | sudo -S apt update -y && sudo apt upgrade -y
 # Instalar sshpass si no está instalado
@@ -21,6 +17,10 @@ echo "$PASSsv1" | sudo -S apt install sshpass -y
 sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP" << EOF
         echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
 EOF
+
+# Actualización de nombre de maquina.
+echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
+echo bash
 
 # Codigo para darle constraseña al usuario Root para poder aplicar el ansible posteriormente.
 echo "$PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
