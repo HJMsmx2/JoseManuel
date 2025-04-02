@@ -9,13 +9,13 @@ PASSsv2="melon"
 HOST_IP="192.168.239.231"
 
 # Actualización de nombre de maquina.
-sudo -S <<< $PASSsv1 hostnamectl set-hostname Server
+echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
 echo bash
 
 # Actualización de repositorios
-sudo -S <<< $PASSsv1 apt update -y && sudo apt upgrade -y
+echo "$PASSsv1" | sudo -S apt update -y && sudo apt upgrade -y
 # Instalar sshpass si no está instalado
-sudo -S <<< $PASSsv1 apt install sshpass -y
+echo "$PASSsv1" | sudo -S apt install sshpass -y
 
 # Conectarse a la Máquina Server directamente sin necesidad de confirmar la fingerprint
 sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP" << EOF
@@ -23,19 +23,19 @@ sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP" << EOF
 EOF
 
 # Codigo para darle constraseña al usuario Root para poder aplicar el ansible posteriormente.
-echo "PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
+echo "$PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
 
 # Creación de backup del netplan actual y aplicación del nuevo netplan
 sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup 
-echo "PASSsv1" | sudo -S rm /etc/netplan/50-cloud-init.yaml
-echo "PASSsv1" | sudo -S touch /etc/netplan/50-cloud-init.yaml
-echo "PASSsv1" | sudo -S bash -c 'cat > /etc/netplan/50-cloud-init.yaml <<EOF
+echo "$PASSsv1" | sudo -S rm /etc/netplan/50-cloud-init.yaml
+echo "$PASSsv1" | sudo -S touch /etc/netplan/50-cloud-init.yaml
+echo "$PASSsv1" | sudo -S bash -c 'cat > /etc/netplan/50-cloud-init.yaml <<EOF
 network:
     ethernets:
         enp1s0:
             dhcp4: false
             addresses:
-            - $HOST_IP/22
+            - "$HOST_IP"/22
             routes:
                 - to: default
                   via: 192.168.236.1
