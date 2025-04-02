@@ -5,7 +5,7 @@
 USERsv1="usuario"
 PASSsv1="usuario"
 PASSsv2="melon"
-
+HOST_IP0="192.168.238.150"
 HOST_IP="192.168.239.231"
 
 # Actualización de repositorios
@@ -14,7 +14,7 @@ echo "$PASSsv1" | sudo -S apt update -y && sudo apt upgrade -y
 echo "$PASSsv1" | sudo -S apt install sshpass -y
 
 # Conectarse a la Máquina Server directamente sin necesidad de confirmar la fingerprint
-sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP" << EOF
+sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EOF
         echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
 EOF
 
@@ -35,7 +35,7 @@ network:
         enp1s0:
             dhcp4: false
             addresses:
-            - "$HOST_IP"/22
+            - $HOST_IP/22
             routes:
                 - to: default
                   via: 192.168.236.1
@@ -44,3 +44,17 @@ network:
     version: 2
 EOF
 netplan apply'
+
+#Esta parte de codigo es de prueba para comprobar si funcionan los espacios
+echo "network:
+    ethernets:
+        enp1s0:
+            dhcp4: false
+            addresses:
+            - $HOST_IP/22
+            routes:
+                - to: default
+                  via: 192.168.236.1
+            nameservers:
+                addresses: [192.168.236.1]
+    version: 2" > /home/prueba_ecologica.txt
