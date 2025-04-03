@@ -16,11 +16,12 @@ echo "$PASSsv1" | sudo -S apt install sshpass -y
 # Conectarse a la Máquina Server directamente sin necesidad de confirmar la fingerprint
 sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EOF
         echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
+        
+        # Cambiar el hostname de la máquina remota
+        echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
+echo bash
 EOF
 
-# Actualización de nombre de maquina.
-echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
-echo bash
 
 # Codigo para darle constraseña al usuario Root para poder aplicar el ansible posteriormente.
 echo "$PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
@@ -35,7 +36,7 @@ network:
         enp1s0:
             dhcp4: false
             addresses:
-            - $HOST_IP/22
+            - '"$HOST_IP"'/22
             routes:
                 - to: default
                   via: 192.168.236.1
