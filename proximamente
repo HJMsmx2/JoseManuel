@@ -1,0 +1,24 @@
+sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EOF
+    echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
+    
+    # Cambiar el hostname de la máquina remota
+    echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
+    
+    # Aquí creamos el archivo de configuración Netplan
+    echo "$PASSsv1" | sudo -S bash -c 'cat > /etc/netplan/50-cloud-init.yaml << "INNER_EOF"
+    network:
+        ethernets:
+            enp1s0:
+                dhcp4: false
+                addresses:
+                - $HOST_IP/22
+                routes:
+                    - to: default
+                      via: 192.168.236.1
+                nameservers:
+                    addresses: [192.168.236.1]
+        version: 2
+INNER_EOF'
+    
+    netplan apply
+EOF
