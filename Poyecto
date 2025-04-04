@@ -1,37 +1,51 @@
 #!/bin/bash
-# Este script hace algo útil
+# Script de configuración inicial desde máquina local
 
 # Variables
 USERsv1="usuario"
-PASSsv1="usuario"
-PASSsv2="melon"
-HOST_IP0="192.168.238.150"
-HOST_IP="192.168.239.231"
+PASSsv1="usuario"     # Contraseña del usuario de la máquina local y remota
+PASSsv2="melon"       # Nueva contraseña para root
+HOST_IP0="192.168.238.150"  # IP de la máquina remota (Server)
+HOST_IP="192.168.239.231"   # Nueva IP estática para la máquina local
 
-# Actualización de repositorios
+# ----------------------
+# Parte local
+# ----------------------
+
+echo "[+] Actualizando repositorios y paquetes..."
 echo "$PASSsv1" | sudo -S apt update
 echo "$PASSsv1" | sudo -S apt upgrade -y
 
-# Instalar sshpass si no está instalado
+echo "[+] Instalando sshpass..."
 echo "$PASSsv1" | sudo -S apt install sshpass -y
 
-# Conectarse a la Máquina Server directamente sin necesidad de confirmar la fingerprint
+# ----------------------
+# Parte remota (Server)
+# ----------------------
+
+echo "[+] Configurando la máquina Server remotamente..."
+
 sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EOF
-        echo "$PASSsv1" | sudo -S bash -c 'echo "root:$PASSsv2" | chpasswd'
-        
-        # Cambiar el hostname de la máquina remota
-        echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
+echo "$PASSsv1" | sudo -S bash -c '
+    # Cambiar contraseña de root
+    echo "root:$PASSsv2" | chpasswd
+
+    # Cambiar hostname
+    hostnamectl set-hostname Server
+'
 EOF
 
+# ----------------------
+# Parte local: Red
+# ----------------------
 
-# Codigo para darle constraseña al usuario Root para poder aplicar el ansible posteriormente.
-echo "$PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
+echo "[+] Configurando red local..."
 
-# Creación de backup del netplan actual y aplicación del nuevo netplan
-sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup 
-echo "$PASSsv1" | sudo -S rm /etc/netplan/50-cloud-init.yaml
-echo "$PASSsv1" | sudo -S touch /etc/netplan/50-cloud-init.yaml
-echo "$PASSsv1" | sudo -S tee /etc/netplan/50-cloud-init.yaml <<EOF
+# Backup de netplan
+echo "$PASSsv1" | sudo -S cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup
+
+# Reescribir el archivo de netplan usando tee para evitar problemas con EOF anidados
+echo "$PASSsv1" | sudo -S tee /etc/netplan/50-cloud-init.yaml > /dev/null <<EOF
 network:
     ethernets:
         enp1s0:
@@ -45,18 +59,9 @@ network:
                 addresses: [192.168.236.1]
     version: 2
 EOF
-netplan apply'
 
-#Esta parte de codigo es de prueba para comprobar si funcionan los espacios
-echo "network:
-    ethernets:
-        enp1s0:
-            dhcp4: false
-            addresses:
-            - $HOST_IP/22
-            routes:
-                - to: default
-                  via: 192.168.236.1
-            nameservers:
-                addresses: [192.168.236.1]
-    version: 2" > /home/prueba_ecologica.txt
+# Aplicar configuración de red
+echo "[+] Aplicando configuración de red..."
+echo "$PASSsv1" | sudo -S netplan apply
+
+echo "[✔] Script finalizado correctamente."
