@@ -14,7 +14,7 @@ HOST_IP="192.168.239.231"   # Nueva IP estática para la máquina local
 
 echo "[+] Actualizando repositorios y paquetes..."
 echo "$PASSsv1" | sudo -S apt update
-echo "$PASSsv1" | sudo -S apt upgrade -y
+#echo "$PASSsv1" | sudo -S apt upgrade -y
 
 echo "[+] Instalando sshpass..."
 echo "$PASSsv1" | sudo -S apt install sshpass -y
