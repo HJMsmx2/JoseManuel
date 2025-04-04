@@ -9,7 +9,9 @@ HOST_IP0="192.168.238.150"
 HOST_IP="192.168.239.231"
 
 # Actualización de repositorios
-echo "$PASSsv1" | sudo -S apt update && sudo apt upgrade -y
+echo "$PASSsv1" | sudo -S apt update
+echo "$PASSsv1" | sudo -S apt upgrade -y
+
 # Instalar sshpass si no está instalado
 echo "$PASSsv1" | sudo -S apt install sshpass -y
 
@@ -19,7 +21,6 @@ sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EO
         
         # Cambiar el hostname de la máquina remota
         echo "$PASSsv1" | sudo -S hostnamectl set-hostname Server
-echo bash
 EOF
 
 
@@ -30,13 +31,13 @@ echo "$PASSsv1" | sudo -S chpasswd <<< "root:$PASSsv2"
 sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup 
 echo "$PASSsv1" | sudo -S rm /etc/netplan/50-cloud-init.yaml
 echo "$PASSsv1" | sudo -S touch /etc/netplan/50-cloud-init.yaml
-echo "$PASSsv1" | sudo -S bash -c 'cat > /etc/netplan/50-cloud-init.yaml <<EOF
+echo "$PASSsv1" | sudo -S tee /etc/netplan/50-cloud-init.yaml <<EOF
 network:
     ethernets:
         enp1s0:
             dhcp4: false
             addresses:
-            - '"$HOST_IP"'/22
+            - $HOST_IP/22
             routes:
                 - to: default
                   via: 192.168.236.1
