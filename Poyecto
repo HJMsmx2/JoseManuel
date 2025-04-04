@@ -1,51 +1,43 @@
 #!/bin/bash
-# Script de configuración inicial desde máquina local
+# Script de configuración desde la máquina local hacia la máquina Server
 
 # Variables
-USERsv1="usuario"
-PASSsv1="usuario"     # Contraseña del usuario de la máquina local y remota
-PASSsv2="melon"       # Nueva contraseña para root
-HOST_IP0="192.168.238.150"  # IP de la máquina remota (Server)
-HOST_IP="192.168.239.231"   # Nueva IP estática para la máquina local
+USERsv1="usuario"             # Usuario en la máquina Server
+PASSsv1="usuario"             # Contraseña de ese usuario
+PASSsv2="melon"               # Nueva contraseña para root
+HOST_IP0="192.168.238.150"    # IP actual de la Server
+HOST_IP="192.168.239.231"     # IP estática que se aplicará en la Server
 
 # ----------------------
 # Parte local
 # ----------------------
 
-echo "[+] Actualizando repositorios y paquetes..."
+echo "[+] Actualizando repositorios localmente..."
 echo "$PASSsv1" | sudo -S apt update
-#echo "$PASSsv1" | sudo -S apt upgrade -y
+echo "$PASSsv1" | sudo -S apt upgrade -y
 
-echo "[+] Instalando sshpass..."
+echo "[+] Instalando sshpass en la máquina local..."
 echo "$PASSsv1" | sudo -S apt install sshpass -y
 
 # ----------------------
 # Parte remota (Server)
 # ----------------------
 
-echo "[+] Configurando la máquina Server remotamente..."
+echo "[+] Conectando y configurando la máquina Server..."
 
 sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EOF
 echo "$PASSsv1" | sudo -S bash -c '
-    # Cambiar contraseña de root
+    echo "[+] Cambiando contraseña de root..."
     echo "root:$PASSsv2" | chpasswd
 
-    # Cambiar hostname
+    echo "[+] Cambiando hostname a Server..."
     hostnamectl set-hostname Server
-'
-EOF
 
-# ----------------------
-# Parte local: Red
-# ----------------------
+    echo "[+] Haciendo copia de seguridad de Netplan..."
+    cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup
 
-echo "[+] Configurando red local..."
-
-# Backup de netplan
-echo "$PASSsv1" | sudo -S cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup
-
-# Reescribir el archivo de netplan usando tee para evitar problemas con EOF anidados
-echo "$PASSsv1" | sudo -S tee /etc/netplan/50-cloud-init.yaml > /dev/null <<EOF
+    echo "[+] Reescribiendo Netplan..."
+    tee /etc/netplan/50-cloud-init.yaml > /dev/null <<EONET
 network:
     ethernets:
         enp1s0:
@@ -58,10 +50,11 @@ network:
             nameservers:
                 addresses: [192.168.236.1]
     version: 2
+EONET
+
+    echo "[+] Aplicando nueva configuración de red..."
+    netplan apply
+'
 EOF
 
-# Aplicar configuración de red
-echo "[+] Aplicando configuración de red..."
-echo "$PASSsv1" | sudo -S netplan apply
-
-echo "[✔] Script finalizado correctamente."
+echo "[✔] Script ejecutado correctamente. La máquina Server ya está configurada."
