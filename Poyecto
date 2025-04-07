@@ -5,8 +5,8 @@
 USERsv1="usuario"             # Usuario en la máquina Server
 PASSsv1="usuario"             # Contraseña de ese usuario
 PASSsv2="melon"               # Nueva contraseña para root
-HOST_IP0="192.168.238.150"    # IP actual de la Server
-HOST_IP="192.168.239.231"     # IP estática que se aplicará en la Server
+HOST_IP0=$1                   # IP actual de la Server
+HOST_IP=$2                    # IP estática que se aplicará en la Server
 
 # ----------------------
 # Parte local
@@ -14,7 +14,7 @@ HOST_IP="192.168.239.231"     # IP estática que se aplicará en la Server
 
 echo "[+] Actualizando repositorios localmente..."
 echo "$PASSsv1" | sudo -S apt update
-echo "$PASSsv1" | sudo -S apt upgrade -y
+#echo "$PASSsv1" | sudo -S apt upgrade -y
 
 echo "[+] Instalando sshpass en la máquina local..."
 echo "$PASSsv1" | sudo -S apt install sshpass -y
@@ -28,7 +28,7 @@ echo "[+] Conectando y configurando la máquina Server..."
 sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no "$USERsv1@$HOST_IP0" << EOF
 echo "$PASSsv1" | sudo -S bash -c '
     echo "[+] Cambiando contraseña de root..."
-    echo "root:$PASSsv2" | chpasswd
+    echo root:$PASSsv2 | chpasswd
 
     echo "[+] Cambiando hostname a Server..."
     hostnamectl set-hostname Server
@@ -52,9 +52,18 @@ network:
     version: 2
 EONET
 
-    echo "[+] Aplicando nueva configuración de red..."
-    netplan apply
+
+    echo "[+] Aplicando nueva configuración de red en un TTY separado..."
+    
+echo "[+] Aplicando nueva configuración de red en segundo plano..."
+    nohup bash -c "sleep 2 && netplan apply" > /dev/null 2>&1 &
+
+    echo "[✔] Configuración aplicada. La máquina cambiará de IP en breve."
+
 '
 EOF
+# Prueba para conectarnos otra vez via ssh. La idea es hacerlo con root pero falla con usuario y el root hay que activalos en sshd_config.
+sshpass -p "$PASSsv1" ssh -o StrictHostKeyChecking=no usuario@"$2"
+exit
 
 echo "[✔] Script ejecutado correctamente. La máquina Server ya está configurada."
