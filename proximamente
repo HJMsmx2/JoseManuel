@@ -1,3 +1,4 @@
+  GNU nano 7.2                                                                                          melon.sh                                                                                                   
 #!/bin/bash
 # Script de configuración desde la máquina local hacia la máquina Server
 
@@ -74,4 +75,4 @@ for i in {1..10}; do
 done
 
 echo "[+] Comprobando conexión SSH como root..."
-sshpass -p "$PASSsv2" ssh -o StrictHostKeyChecking=no root@"$HOST_IP" "hostname && whoami"
+sshpass -p "$PASSsv2" ssh -o StrictHostKeyChecking=no root@"$HOST_IP"
