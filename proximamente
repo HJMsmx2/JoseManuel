@@ -37,8 +37,12 @@ echo "$PASSsv1" | sudo -S bash -c '
     sed -i "s/^#\\?PermitRootLogin .*/PermitRootLogin yes/" /etc/ssh/sshd_config
     systemctl restart ssh
 
+   if [ ! -f /etc/netplan/50-cloud-init.yaml.bkup ]; then
     echo "[+] Haciendo copia de seguridad de Netplan..."
     cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.bkup
+   else
+    echo "[i] Backup de Netplan ya existe, no se sobrescribe."
+   fi
 
     echo "[+] Reescribiendo Netplan..."
     cat > /etc/netplan/50-cloud-init.yaml << EONET
