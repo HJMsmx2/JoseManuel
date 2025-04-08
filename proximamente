@@ -65,3 +65,13 @@ EONET
 EOF
 
 echo "[✔] Script ejecutado correctamente. La máquina Server ya está configurada."
+echo "[...] Esperando a que la máquina Server esté disponible en su nueva IP..."
+
+for i in {1..10}; do
+    ping -c 1 "$HOST_IP" > /dev/null 2>&1 && break
+    echo "Esperando... ($i)"
+    sleep 3
+done
+
+echo "[+] Comprobando conexión SSH como root..."
+sshpass -p "$PASSsv2" ssh -o StrictHostKeyChecking=no root@"$HOST_IP" "hostname && whoami"
