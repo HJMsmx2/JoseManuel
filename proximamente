@@ -14,7 +14,7 @@ HOST_IP=$2          # IP estática que se aplicará
 
 echo "[+] Actualizando repositorios localmente..."
 echo "$PASSsv1" | sudo -S apt update
-echo "$PASSsv1" | sudo -S apt upgrade -y
+#echo "$PASSsv1" | sudo -S apt upgrade -y
 
 echo "[+] Instalando sshpass en la máquina local..."
 echo "$PASSsv1" | sudo -S apt install sshpass -y
