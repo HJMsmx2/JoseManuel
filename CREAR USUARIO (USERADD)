@@ -1,0 +1,10 @@
+--------------------------------------------------
+CREAR USUARIOS PASO A PASO
+--------------------------------------------------
+sudo useradd -m -s /bin/bash Tecnico_Jefe
+# -m crea el directorio /home/Tecnico_Jefe
+# -s /bin/bash establece /bin/bash como shell por defecto
+
+echo "Tecnico_Jefe:MiContraseñaSegura" | sudo chpasswd
+sudo usermod -aG sudo Tecnico_Jefe
+sudo chown -R Tecnico_Jefe:Tecnico_Jefe /home/Tecnico_Jefe
