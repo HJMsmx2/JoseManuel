@@ -1,0 +1,7 @@
+# Conectarse via "ssh" por primera vez sin contraseña ni fingerprint
+# INSTALAR PAQUETE SSHPASS.
+sudo apt install sshpass
+
+# ESTRUCTURA DEL COMANDO 
+# sshpass -p 'tu_clave' ssh -o StrictHostKeyChecking=no usuario@ip
+sshpass -p usuario ssh -o StrictHostKeyChecking=no usuario@192.168.239.231
