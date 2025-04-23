@@ -2,6 +2,7 @@
 
 # Nombre del proyecto
 PROYECTO="samba_ad_dc_project"
+enp1s0="$1"
 
 echo "Creando estructura de carpetas Ansible para $PROYECTO..."
 
@@ -11,7 +12,7 @@ mkdir -p $PROYECTO/{inventory,roles/samba_ad_dc/{tasks,vars,files}}
 # Archivo de inventario
 cat > $PROYECTO/inventory/hosts <<EOF
 [server]
-192.168.1.8 ansible_user=tu_usuario ansible_ssh_pass=tu_contraseña ansible_become=true
+$1 ansible_user=root ansible_ssh_pass=melon ansible_become=true
 EOF
 
 # Playbook principal
