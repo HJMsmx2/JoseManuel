@@ -3,7 +3,7 @@
 # Nombre del proyecto
 PROYECTO="samba_ad_dc_project"
 
-echo "🛠️ Creando estructura de carpetas Ansible para $PROYECTO..."
+echo "Creando estructura de carpetas Ansible para $PROYECTO..."
 
 # Crear estructura básica
 mkdir -p $PROYECTO/{inventory,roles/samba_ad_dc/{tasks,vars,files}}
@@ -195,4 +195,4 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
   ansible.builtin.command: samba-tool domain level show
 EOF
 
-echo "✅ Estructura del proyecto creada correctamente en ./$PROYECTO"
+echo "Estructura del proyecto creada correctamente en ./$PROYECTO"
