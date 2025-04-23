@@ -195,4 +195,4 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
   ansible.builtin.command: samba-tool domain level show
 EOF
 
-echo "Estructura del proyecto creada correctamente en ./$PROYECTO"
+echo "[✔] Estructura del proyecto creada correctamente en ./$PROYECTO"
