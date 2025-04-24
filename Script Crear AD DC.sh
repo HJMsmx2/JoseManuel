@@ -33,7 +33,6 @@ fqdn: dc.hjm.local
 domain_name: hjm.local
 realm: HJM.LOCAL
 domain: hjm
-dns_forwarder: 8.8.8.8
 net_prefix: 192.168.1.0/24
 admin_password: usuario1234*
 EOF
@@ -162,57 +161,3 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
     enabled: yes
     state: restarted
 
-# VERIFICACIONES
-
-- name: Verificar A record hjm.local
-  ansible.builtin.command: host -t A {{ domain_name }}
-
-- name: Verificar A record FQDN
-  ansible.builtin.command: host -t A {{ fqdn }}
-
-- name: Verificar SRV Kerberos
-  ansible.builtin.command: host -t SRV _kerberos._udp.{{ domain_name }}
-
-- name: Verificar SRV LDAP
-  ansible.builtin.command: host -t SRV _ldap._tcp.{{ domain_name }}
-
-- name: Comprobar recursos Samba
-  ansible.builtin.command: smbclient -L {{ domain_name }} -N
-
-- name: Autenticación Kerberos con kinit
-  ansible.builtin.shell: echo '{{ admin_password }}' | kinit administrator@{{ realm }}
-
-- name: Listar credenciales Kerberos
-  ansible.builtin.command: klist
-
-- name: Comprobar acceso a netlogon
-  ansible.builtin.command: >
-    smbclient //localhost/netlogon -U administrator%'{{ admin_password }}'
-
-- name: Verificar configuración de samba
-  ansible.builtin.command: testparm -s
-
-- name: Mostrar nivel de dominio
-  ansible.builtin.command: samba-tool domain level show
-EOF
-
-# Makefile
-cat > $PROYECTO/Makefile <<'EOF'
-# Makefile para el despliegue del servidor Samba AD DC
-
-inventory=inventory/hosts
-playbook=playbook.yml
-
-.PHONY: deploy ping check
-
-deploy:
-	ansible-playbook -i $(inventory) $(playbook)
-
-ping:
-	ansible -i $(inventory) server -m ping
-
-check:
-	ansible-playbook -i $(inventory) $(playbook) --check
-EOF
-
-echo "[✔] Proyecto Ansible creado correctamente en ./$PROYECTO"
