@@ -2,7 +2,7 @@
 
 # Nombre del proyecto
 PROYECTO="ADDC-HJM"
-enp1s0="192.168.239.162"
+enp1s0="192.168.237.2"
 
 echo "Creando estructura de carpetas Ansible para $PROYECTO..."
 
@@ -12,7 +12,7 @@ mkdir -p $PROYECTO/{inventory,roles/samba_ad_dc/{tasks,vars,files}}
 # Archivo de inventario
 cat > $PROYECTO/inventory/hosts <<EOF
 [server]
-192.168.239.162 ansible_user=root ansible_ssh_pass=melon ansible_become=true
+192.168.237.2 ansible_user=root ansible_ssh_pass=melon ansible_become=true
 EOF
 
 # Playbook principal
@@ -202,3 +202,9 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
 EOF
 
 echo "[✔] Estructura del proyecto creada correctamente en ./$PROYECTO"
+echo " Ejecutando ansible..."
+sleep 2
+cd $PROYECTO/
+ansible-playbook -i inventory/hosts playbook.yml
+
+echo "Ansible terminado"
