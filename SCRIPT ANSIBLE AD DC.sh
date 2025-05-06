@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Nombre del proyecto
 PROYECTO="ADDC-HJM"
 enp1s0="192.168.237.2"
@@ -33,7 +32,6 @@ fqdn: dc.hjm.local
 domain_name: hjm.local
 realm: HJM.LOCAL
 domain: hjm
-dns_forwarder: 8.8.8.8
 net_prefix: 192.168.1.0/24
 admin_password: usuario1234*
 EOF
@@ -129,7 +127,6 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
     --domain={{ domain }}
     --server-role=dc
     --dns-backend=SAMBA_INTERNAL
-    --dns-forwarder={{ dns_forwarder }}
     --adminpass='{{ admin_password }}'
   register: provision_result
   changed_when: "'Administrator password' in provision_result.stdout"
@@ -193,7 +190,6 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
 - name: Comprobar acceso a netlogon
   ansible.builtin.command: >
     smbclient //localhost/netlogon -U administrator%'{{ admin_password }}'
-
 - name: Verificar configuración de samba
   ansible.builtin.command: testparm -s
 
