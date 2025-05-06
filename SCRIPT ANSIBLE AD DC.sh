@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Nombre del proyecto
-PROYECTO="samba_ad_dc_project"
-enp1s0="$1"
+PROYECTO="ADDC-HJM"
+enp1s0="192.168.239.162"
 
 echo "Creando estructura de carpetas Ansible para $PROYECTO..."
 
@@ -12,7 +12,7 @@ mkdir -p $PROYECTO/{inventory,roles/samba_ad_dc/{tasks,vars,files}}
 # Archivo de inventario
 cat > $PROYECTO/inventory/hosts <<EOF
 [server]
-$1 ansible_user=root ansible_ssh_pass=melon ansible_become=true
+192.168.239.162 ansible_user=root ansible_ssh_pass=melon ansible_become=true
 EOF
 
 # Playbook principal
@@ -28,7 +28,7 @@ EOF
 # Variables del rol
 cat > $PROYECTO/roles/samba_ad_dc/vars/main.yml <<EOF
 hostname: dc
-ip_address: 192.168.1.8
+ip_address: 192.168.1.2
 fqdn: dc.hjm.local
 domain_name: hjm.local
 realm: HJM.LOCAL
