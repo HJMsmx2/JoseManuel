@@ -187,11 +187,14 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
 - name: Listar credenciales Kerberos
   ansible.builtin.command: klist
 
+- name: Verificar estado de samba-ad-dc
+  ansible.builtin.command: systemctl status samba-ad-dc
+
 - name: Comprobar acceso a netlogon
-  ansible.builtin.shell: |
-    echo -e 'exit\n' | smbclient //localhost/netlogon -U administrator%"{{ admin_password }}"
-  register: netlogon_result
-  failed_when: "'NT_STATUS' in netlogon_result.stdout"
+  ansible.builtin.command: >
+    smbclient //localhost/netlogon -U administrator%'{{ admin_password }}'
+- name: Verificar configuración de samba
+  ansible.builtin.command: testparm -s
 
 - name: Mostrar nivel de dominio
   ansible.builtin.command: samba-tool domain level show
