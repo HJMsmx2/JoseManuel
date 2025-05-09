@@ -143,6 +143,12 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
     name: samba-ad-dc
     state: started
 
+- name: Crear usuario hjmer en el dominio
+  ansible.builtin.command: >
+    samba-tool user create hjmer usuario
+  register: create_user_result
+  changed_when: "'Created user' in create_user_result.stdout"
+
 - name: Establecer permisos en ntp_signd
   ansible.builtin.file:
     path: /var/lib/samba/ntp_signd/
@@ -193,6 +199,7 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
 - name: Comprobar acceso a netlogon
   ansible.builtin.command: >
     smbclient //localhost/netlogon -U administrator%'{{ admin_password }}'
+
 - name: Verificar configuración de samba
   ansible.builtin.command: testparm -s
 
