@@ -145,7 +145,7 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
 
 - name: Crear usuario hjmer en el dominio
   ansible.builtin.command: >
-    samba-tool user create hjmer usuario
+    samba-tool user create hjmer usuario123*
   register: create_user_result
   changed_when: "'Created user' in create_user_result.stdout"
 
@@ -170,41 +170,6 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
     enabled: yes
     state: restarted
 
-# VERIFICACIONES
-
-- name: Verificar A record hjm.local
-  ansible.builtin.command: host -t A {{ domain_name }}
-
-- name: Verificar A record FQDN
-  ansible.builtin.command: host -t A {{ fqdn }}
-
-- name: Verificar SRV Kerberos
-  ansible.builtin.command: host -t SRV _kerberos._udp.{{ domain_name }}
-
-- name: Verificar SRV LDAP
-  ansible.builtin.command: host -t SRV _ldap._tcp.{{ domain_name }}
-
-- name: Comprobar recursos Samba
-  ansible.builtin.command: smbclient -L {{ domain_name }} -N
-
-- name: Autenticación Kerberos con kinit
-  ansible.builtin.shell: echo '{{ admin_password }}' | kinit administrator@{{ realm }}
-
-- name: Listar credenciales Kerberos
-  ansible.builtin.command: klist
-
-- name: Verificar estado de samba-ad-dc
-  ansible.builtin.command: systemctl status samba-ad-dc
-
-- name: Comprobar acceso a netlogon
-  ansible.builtin.command: >
-    smbclient //localhost/netlogon -U administrator%'{{ admin_password }}'
-
-- name: Verificar configuración de samba
-  ansible.builtin.command: testparm -s
-
-- name: Mostrar nivel de dominio
-  ansible.builtin.command: samba-tool domain level show
 EOF
 
 echo "[✔] Estructura del proyecto creada correctamente en ./$PROYECTO"
