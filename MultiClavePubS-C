@@ -1,4 +1,3 @@
-
 if [[ -f ~/.ssh/id_rsa.pub ]]; then
     read -p "[?] Ya existe una clave SSH en ~/.ssh/id_rsa.pub. ¿Deseas sobrescribirla? (s/n): " RESP
     if [[ "$RESP" == "s" || "$RESP" == "S" ]]; then
