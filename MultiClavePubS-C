@@ -1,0 +1,25 @@
+
+if [[ -f ~/.ssh/id_rsa.pub ]]; then
+    read -p "[?] Ya existe una clave SSH en ~/.ssh/id_rsa.pub. ¿Deseas sobrescribirla? (s/n): " RESP
+    if [[ "$RESP" == "s" || "$RESP" == "S" ]]; then
+        echo "[+] Eliminando clave SSH antigua..."
+        rm -f ~/.ssh/id_rsa ~/.ssh/id_rsa.pub
+        echo "[+] Generando nueva clave SSH..."
+        ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+    else
+        echo "[i] Se usará la clave SSH existente."
+    fi
+else
+    echo "[+] Generando clave SSH..."
+    ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+fi
+
+echo "[...] Esperando a que la máquina Server esté disponible en $SVIP1..."
+for i in {1..10}; do
+    ping -c 1 "$SVIP1" > /dev/null 2>&1 && break
+    echo "Esperando... ($SVIP1)"
+    sleep 3
+done
+
+echo "[+] Copiando clave SSH al root del servidor..."
+sshpass -p "$PASSsv2" ssh-copy-id root@"$SVIP1"
