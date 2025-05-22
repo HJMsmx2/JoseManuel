@@ -145,7 +145,7 @@ cat > $PROYECTO/roles/samba_ad_dc/tasks/main.yml <<'EOF'
 
 - name: Crear usuario hjmer en el dominio
   ansible.builtin.command: >
-    samba-tool user create hjmer usuario123*
+    samba-tool user create hjmer usuario1234*
   register: create_user_result
   changed_when: "'Created user' in create_user_result.stdout"
 
