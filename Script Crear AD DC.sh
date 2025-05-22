@@ -28,6 +28,7 @@ EOF
 # Variables del rol
 cat > $PROYECTO/roles/samba_ad_dc/vars/main.yml <<EOF
 hostname: dc
+dns_forwarder: 9.9.9.9
 ip_address: 192.168.1.2
 fqdn: dc.hjm.local
 domain_name: hjm.local
