@@ -135,6 +135,7 @@ EOF
 cat > $PROYECTO/roles/samba_ad_dc/vars/main.yml <<EOF
 hostname: dc
 ip_address: 192.168.1.2
+dns_forwarder: 8.8.8.8
 fqdn: dc.hjm.local
 domain_name: hjm.local
 realm: HJM.LOCAL
