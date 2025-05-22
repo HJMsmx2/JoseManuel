@@ -110,14 +110,6 @@ done
 echo "[+] Copiando clave SSH al root del servidor..."
 sshpass -p "$PASSsv2" ssh-copy-id root@"$SVIP1"
 
-sleep 5
-
-for PLAYBOOK in "${PLAYBOOK[@]}"; do
-    echo "Ejecutando $PLAYBOOK..."
-    ansible-playbook -i "$INVENTORY" "$DIR2/$PLAYBOOK"
-
-done
-
 echo "Creando estructura de carpetas Ansible para $PROYECTO..."
 
 # Crear estructura básica
